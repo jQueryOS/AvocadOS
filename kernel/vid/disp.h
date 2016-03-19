@@ -1,8 +1,9 @@
 #ifndef DISP_H
 #define DISP_H
 
-#define DISP_WIDTH  200
-#define DISP_HEIGHT 80
+#include 'draw.h'
+#define DISP_H 1920u
+#define DISP_W 1080u
 
 unsigned char* row_address(unsigned char l);
 
