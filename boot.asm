@@ -14,11 +14,18 @@
 
 [ORG 0x7C00] ; Location of bootloader
 	
-    ; some code here
+; mov al, 'a'
+; call printchar
 
 jmp $
 
-    ; routines here
+; printchar:
+;   mov ah, 0x0E ; one char
+;   mox bh, 0x00 ; page num
+;   mov bl, 0x07 ; color
+
+;    int 0x10 ; interupt video
+; ret
 
 times 510 - ($ - $$) db 0 ; calculate length of code, set to zero
 
