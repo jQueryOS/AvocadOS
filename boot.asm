@@ -13,7 +13,7 @@
 %endif
 	
 start:
-	mov ax 07C0h ; 0x07C0h is where our bootloader starts
+	mov eax 0x07C0 ; 0x07C0h is where our bootloader starts
 
 .done:
 	dw 0xAA55 ; boot signatre
