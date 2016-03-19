@@ -1,3 +1,3 @@
-# jQueryOS
+# AvocadOS
 
-The revolutionary jQueryOS 
+The revolutionary AvocadOS powered by jQuery.
