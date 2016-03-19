@@ -7,13 +7,19 @@
 
 ; Switches between 64-bit or 32-bit
 %ifdef __x86_64__  
-	BITS 64
+	[BITS 64]
 %else
-	BITS 32
+	[BITS 32]
 %endif
-	
-start:
-	mov eax, 0x07C0 ; 0x07C0h is where our bootloader starts
 
-.done:
-	db 0xAA55 ; boot signatre
+[ORG 0x7C00] ; Location of bootloader
+	
+    ; some code here
+
+jmp $
+
+    ; routines here
+
+times 510 - ($ - $$) db 0 ; calculate length of code, set to zero
+
+dw 0xAA55 ; boot signature
