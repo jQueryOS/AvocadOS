@@ -6,7 +6,7 @@
 ; DF - data (w/ AX and large values)
 
 ; Switches between 64-bit or 32-bit
-%ifdef X64
+%ifdef __x86_64__  
 	BITS 64
 %else
 	BITS 32
