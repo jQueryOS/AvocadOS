@@ -84,9 +84,18 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
 void terminal_newline() {
 	terminal_column = 0;
 	if (++terminal_row == VGA_HEIGHT) {
-		terminal_row = 0;
+		terminal_row = VGA_HEIGHT - 1;
+		for (size_t y = 0; y < VGA_HEIGHT - 1; y++) {
+			for (size_t x = 0; x < VGA_WIDTH; x++) {
+				const size_t index = y * VGA_WIDTH + x;
+				terminal_buffer[index] = terminal_buffer[index + VGA_WIDTH];
+			}
+		}
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			const size_t index = terminal_row * VGA_WIDTH + x;
+			terminal_buffer[index] = make_vgaentry(0, 0); // might need to be (0,terminal_color)
+		}
 	}
-	//TODO: scrolling support, possibly
 }
  
 void terminal_putchar(char c) {
@@ -117,5 +126,5 @@ void kernel_main() {
          * yet, '\n' will produce some VGA specific character instead.
          * This is normal.
          */
-	terminal_writestring("Hello, kernel World!\nNewlines work!\n\n\n\n\n\n         :D");
+	terminal_writestring("Hello, kernel World!\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35\n36\n37\n38\n39\n40\n41\n42\n43\n44\n45\n46\n47\n48\n49\n50");
 }
