@@ -20,7 +20,6 @@ void setfg(enum vga_color color);
 void setbg(enum vga_color color);
 void putentryat(char c, uint8_t color, size_t x, size_t y);
 void newline(void);
-void printchar(char c);
 void print(const char* text);
 void println(const char* line);
 void printnum(uint8_t number);

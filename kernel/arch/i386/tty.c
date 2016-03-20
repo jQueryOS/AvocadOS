@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-#include <kernel/vga.h>
 #include <kernel/tty.h>
 
 size_t terminal_row;
@@ -21,6 +20,17 @@ void terminal_initialize() {
 	size_t area = VGA_HEIGHT * VGA_WIDTH;
 	for (size_t i = 0; i < area; i++) {
 		terminal_buffer[i] = make_vgaentry(' ', terminal_color);
+	}
+}
+
+void terminal_putchar(char c) {
+	if (c  == '\n') {
+		newline();
+	} else {
+		putentryat(c, terminal_color, terminal_column, terminal_row);
+		if (++terminal_column == VGA_WIDTH) {
+			newline();
+		}
 	}
 }
 
@@ -82,25 +92,18 @@ void newline() {
 	}
 }
 
-void printchar(char c) {
-	if (c  == '\n') {
-		newline();
-	} else {
-		putentryat(c, terminal_color, terminal_column, terminal_row);
-		if (++terminal_column == VGA_WIDTH) {
-			newline();
-		}
-	}
+void terminal_write(const char* text, size_t size)
+{
+	for ( size_t i = 0; i < size; i++ )
+		terminal_putchar(text[i]);
 }
 
-void print(const char* text) {
-	size_t datalen = strlen(text);
-	for (size_t i = 0; i < datalen; i++)
-		putchar(text[i]);
+void terminal_writestring(const char* text) {
+	terminal_write(text, strlen(text));
 }
 
 void println(const char* line) {
-	print(line);
+	terminal_writestring(line);
 	newline();
 }
 
@@ -115,10 +118,12 @@ void printnum(uint8_t number) {
 
 void print_special(enum vga_color color, const char* text, const char* message) {
 	tempsetfg(color);
-	print(text);
+	terminal_writestring(text);
 	resetfg();
 	println(message);
 }
+
+//TODO: move
 
 void success(const char* message) {
 	print_special(LIGHT_GREEN, "Success: ", message);
