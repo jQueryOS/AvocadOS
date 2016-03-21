@@ -1,10 +1,7 @@
 #ifndef _VGA_H
 #define _VGA_H 1
 
-#include <stddef.h>
-#include <stdint.h>
-
-enum vga_color {
+typedef enum {
 	BLACK = 0,
 	BLUE = 1,
 	GREEN = 2,
@@ -21,9 +18,12 @@ enum vga_color {
 	LIGHT_MAGENTA = 13,
 	LIGHT_BROWN = 14,
 	WHITE = 15,
-};
+} vga_color;
 
-static inline uint8_t make_color(enum vga_color fg, enum vga_color bg) {
+#include <stddef.h>
+#include <stdint.h>
+
+static inline uint8_t make_color(vga_color fg, vga_color bg) {
 	return fg | bg << 4;
 }
 

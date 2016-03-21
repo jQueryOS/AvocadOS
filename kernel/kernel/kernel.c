@@ -1,5 +1,5 @@
 #if !defined(__cplusplus)
-#include <stdbool.h> /* C doesn't have booleans by default. */
+#include <stdbool.h> //C doesn't have booleans by default
 #endif
 #include <stddef.h>
 #include <stdint.h>
@@ -9,6 +9,7 @@
 #include <colors.h>
 
 #include <kernel/tty.h>
+#include <kernel/io.h>
 
 #if defined(__linux__)
 #error "Use a cross-compiler"
@@ -27,6 +28,7 @@ extern "C" //C linkage
 #endif
 void kernel_main() {
 	terminal_initialize();
+	io_initialize();
 	println("Hello, World!");
 	for(int i = 1; i <= 30; i++)
 		println("%i", i);
@@ -34,4 +36,9 @@ void kernel_main() {
 	info("Test.");
 	warn("Test.");
 	err("Test\ttabs.");
+	println("Done!");
+	while (true) {
+		char c = io_getchar();
+		println("%c", c);
+	}
 }

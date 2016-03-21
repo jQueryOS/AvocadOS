@@ -12,8 +12,8 @@ EXEC_PREFIX?=$(PREFIX)
 BOOTDIR?=$(EXEC_PREFIX)/boot
 INCLUDEDIR?=$(PREFIX)/include
 
-CFLAGS:=$(CFLAGS) -ffreestanding -fbuiltin -Wall -Wextra -fstack-protector-all
-CPPFLAGS:=$(CPPFLAGS) -D__is_avocados_kernel -Iinclude -fstack-protector-all
+CFLAGS:=$(CFLAGS) -ffreestanding -fbuiltin -Wall -Wextra
+CPPFLAGS:=$(CPPFLAGS) -D__is_avocados_kernel -Iinclude
 LDFLAGS:=$(LDFLAGS)
 LIBS:=$(LIBS) -nostdlib -lk -ltermk -lgcc
 # Add new libs here

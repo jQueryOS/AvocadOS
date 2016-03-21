@@ -7,8 +7,8 @@ size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
-enum vga_color foreground;
-enum vga_color background;
+vga_color foreground;
+vga_color background;
 size_t area;
 size_t all_but_last_line;
 
@@ -31,6 +31,9 @@ void terminal_putchar(char c) {
 		case '\n':
 			newline();
 			break;
+		case '\b':
+			backspace();
+			break;
 		case '\t':
 			terminal_writestring(TAB);
 			break;
@@ -40,6 +43,7 @@ void terminal_putchar(char c) {
 				newline();
 			break;
 	}
+	update_cursor(terminal_row, terminal_column);
 }
 
 void terminal_write(const char* text, size_t size) {
@@ -51,22 +55,22 @@ void terminal_writestring(const char* text) {
 	terminal_write(text, strlen(text));
 }
 
-void tempsetcolor(enum vga_color fg, enum vga_color bg) {
+void tempsetcolor(vga_color fg, vga_color bg) {
 	terminal_color = make_color(fg, bg);
 }
 
-void setcolor(enum vga_color fg, enum vga_color bg) {
+void setcolor(vga_color fg, vga_color bg) {
 	tempsetcolor(fg, bg);
 	foreground = fg;
 	background = bg;
 }
 
 //TODO: with_fg/bg macros?
-void tempsetfg(enum vga_color color) {
+void tempsetfg(vga_color color) {
 	terminal_color = (terminal_color & 0xF0) | color;
 }
 
-void tempsetbg(enum vga_color color) {
+void tempsetbg(vga_color color) {
 	terminal_color = (terminal_color & 0x0F) | color << 4;
 }
 
@@ -78,12 +82,12 @@ void resetbg() {
 	tempsetbg(background);
 }
 
-void setfg(enum vga_color color) {
+void setfg(vga_color color) {
 	tempsetfg(color);
 	foreground = color;
 }
 
-void setbg(enum vga_color color) {
+void setbg(vga_color color) {
 	tempsetbg(color);
 	background = color;
 }
@@ -103,4 +107,12 @@ void newline() {
 		terminal_buffer[i] = terminal_buffer[i + VGA_WIDTH];
 	for (size_t i = all_but_last_line; i < area; i++)
 		terminal_buffer[i] = make_vgaentry(' ', terminal_color);
+}
+
+void backspace() {
+	if (--terminal_column == (size_t) -1) {
+		terminal_row--;
+		terminal_column = VGA_WIDTH;
+	}
+	putentryat(' ', terminal_color, terminal_column, terminal_row);
 }
