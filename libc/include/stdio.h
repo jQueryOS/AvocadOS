@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 int printf(const char* __restrict, ...);
+int println(const char* __restrict, ...);
 int putchar(int);
 int puts(const char*);
 

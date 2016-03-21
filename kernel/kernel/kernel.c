@@ -6,41 +6,32 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <colors.h>
+
 #include <kernel/tty.h>
 
 #if defined(__linux__)
 #error "Use a cross-compiler"
 #endif
 
-#if !defined(__i386__)
+#if !defined(__i386__) && !defined(__i686__)
 #error "This needs to be compiled with an ix86-elf compiler"
 #endif
 
-// TODO: possibly use glibc's implementation
-size_t strlen(const char* str) {
-	size_t ret = 0;
-	while ( str[ret] != 0 )
-		ret++;
-	return ret;
-}
-
-void kernel_early(void) {
+void kernel_early() {
 	terminal_initialize();
 }
 
 #if defined(__cplusplus)
-extern "C" /* Use C linkage for kernel_main. */
+extern "C" //C linkage
 #endif
 void kernel_main() {
-	/* Initialize terminal interface */
 	terminal_initialize();
 	println("Hello, World!");
-	for(uint8_t i = 0; i <=50; i++) {
-		printnum(i);
-		newline();
-	}
+	for(int i = 1; i <= 30; i++)
+		println("%i", i);
 	success("Test.");
 	info("Test.");
 	warn("Test.");
-	err("Test.");
+	err("Test\ttabs.");
 }

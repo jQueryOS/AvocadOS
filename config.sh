@@ -1,5 +1,6 @@
-SYSTEM_HEADER_PROJECTS="libc kernel"
-PROJECTS="libc kernel"
+SYSTEM_HEADER_PROJECTS="libc libterm kernel"
+PROJECTS="libc libterm kernel"
+# Add new libs here
 
 export MAKE=${MAKE:-make}
 export HOST=${HOST:-$(./default-host.sh)}

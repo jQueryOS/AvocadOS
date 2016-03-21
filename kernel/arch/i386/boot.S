@@ -1,6 +1,6 @@
-.set ALIGN,    1<<0             # align loaded modules on page boundaries
-.set MEMINFO,  1<<1             # provide memory map
-.set FLAGS,    ALIGN | MEMINFO  # Multiboot flags
+.set ALIGN,    1<<0 # align loaded modules on page boundaries
+.set MEMINFO,  1<<1 # memory map
+.set FLAGS,    ALIGN | MEMINFO
 .set MAGIC,    0x1BADB002
 .set CHECKSUM, -(MAGIC + FLAGS)
 
@@ -17,7 +17,7 @@ stack_bottom:
 .skip 16384
 stack_top:
 
-# entry point, doesn't make sense to return as bootloader is gone
+# entry point, no return as bootloader is gone
 .section .text
 .global _start
 .type _start, @function
@@ -31,6 +31,6 @@ _start:
 	hlt
 	jmp .Lhang
 
-# set size of the _start symbol to the current location (.) minus its start
-# useful when debugging and for call tracing
+# set size of _start to current location (.) minus start
+# useful when debugging/for call tracing
 .size _start, . - _start

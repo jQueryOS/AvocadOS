@@ -1,37 +1,54 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdint.h>
 #include <kernel/tty.h>
 
+#define TAB "    "
 size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
 enum vga_color foreground;
 enum vga_color background;
+size_t area;
+size_t all_but_last_line;
 
 void terminal_initialize() {
+	area = VGA_HEIGHT * VGA_WIDTH;
+	all_but_last_line = area - VGA_WIDTH;
 	terminal_row = 0;
 	terminal_column = 0;
 	foreground = LIGHT_GREY;
 	background = BLACK;
 	terminal_color = make_color(foreground, background);
 	terminal_buffer = VGA_MEMORY;
-	size_t area = VGA_HEIGHT * VGA_WIDTH;
-	for (size_t i = 0; i < area; i++) {
+	for (size_t i = 0; i < area; i++)
 		terminal_buffer[i] = make_vgaentry(' ', terminal_color);
+}
+
+//TODO: support all escape chars, except \r. e.g. \b
+void terminal_putchar(char c) {
+	switch (c) {
+		case '\n':
+			newline();
+			break;
+		case '\t':
+			terminal_writestring(TAB);
+			break;
+		default:
+			putentryat(c, terminal_color, terminal_column, terminal_row);
+			if (++terminal_column == VGA_WIDTH)
+				newline();
+			break;
 	}
 }
 
-void terminal_putchar(char c) {
-	if (c  == '\n') {
-		newline();
-	} else {
-		putentryat(c, terminal_color, terminal_column, terminal_row);
-		if (++terminal_column == VGA_WIDTH) {
-			newline();
-		}
-	}
+void terminal_write(const char* text, size_t size) {
+	for (size_t i = 0; i < size; i++)
+		terminal_putchar(text[i]);
+}
+
+void terminal_writestring(const char* text) {
+	terminal_write(text, strlen(text));
 }
 
 void tempsetcolor(enum vga_color fg, enum vga_color bg) {
@@ -44,6 +61,7 @@ void setcolor(enum vga_color fg, enum vga_color bg) {
 	background = bg;
 }
 
+//TODO: with_fg/bg macros?
 void tempsetfg(enum vga_color color) {
 	terminal_color = (terminal_color & 0xF0) | color;
 }
@@ -70,73 +88,19 @@ void setbg(enum vga_color color) {
 	background = color;
 }
 
-void putentryat(char c, uint8_t color, size_t x, size_t y) {
-	const size_t index = y * VGA_WIDTH + x;
-	terminal_buffer[index] = make_vgaentry(c, color);
+void putentryat(char c, uint8_t color, size_t left, size_t top) {
+	const size_t i = top * VGA_WIDTH + left;
+	terminal_buffer[i] = make_vgaentry(c, color);
 }
 
 void newline() {
 	terminal_column = 0;
-	if (++terminal_row == VGA_HEIGHT) {
-		terminal_row = VGA_HEIGHT - 1;
-		for (size_t y = 0; y < VGA_HEIGHT - 1; y++) {
-			for (size_t x = 0; x < VGA_WIDTH; x++) {
-				const size_t index = y * VGA_WIDTH + x;
-				terminal_buffer[index] = terminal_buffer[index + VGA_WIDTH];
-			}
-		}
-		for (size_t x = 0; x < VGA_WIDTH; x++) {
-			const size_t index = terminal_row * VGA_WIDTH + x;
-			terminal_buffer[index] = make_vgaentry(0, terminal_color);
-		}
-	}
-}
+	if (++terminal_row != VGA_HEIGHT)
+		return;
+	terminal_row--;
 
-void terminal_write(const char* text, size_t size)
-{
-	for ( size_t i = 0; i < size; i++ )
-		terminal_putchar(text[i]);
-}
-
-void terminal_writestring(const char* text) {
-	terminal_write(text, strlen(text));
-}
-
-void println(const char* line) {
-	terminal_writestring(line);
-	newline();
-}
-
-//TODO: recursion is probably not the best way
-void printnum(uint8_t number) {
-	int next_digit = number / 10;
-	if (next_digit) {
-		printnum(next_digit);
-	}
-	putchar((char) (number % 10 + 48));
-}
-
-void print_special(enum vga_color color, const char* text, const char* message) {
-	tempsetfg(color);
-	terminal_writestring(text);
-	resetfg();
-	println(message);
-}
-
-//TODO: move
-
-void success(const char* message) {
-	print_special(LIGHT_GREEN, "Success: ", message);
-}
-
-void info(const char* message) {
-	print_special(LIGHT_BLUE, "Info: ", message);
-}
-
-void warn(const char* message) {
-	print_special(LIGHT_BROWN, "Warning: ", message);
-}
-
-void err(const char* message) {
-	print_special(LIGHT_RED, "Error: ", message);
+	for (size_t i = 0; i < all_but_last_line; i++)
+		terminal_buffer[i] = terminal_buffer[i + VGA_WIDTH];
+	for (size_t i = all_but_last_line; i < area; i++)
+		terminal_buffer[i] = make_vgaentry(' ', terminal_color);
 }

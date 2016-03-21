@@ -1,9 +1,9 @@
 #include <string.h>
 
-size_t strlen(const char* string)
-{
+// TODO: possibly use glibc's implementation
+size_t strlen(const char* string) {
 	size_t result = 0;
-	while ( string[result] )
+	while (string[result])
 		result++;
 	return result;
 }
