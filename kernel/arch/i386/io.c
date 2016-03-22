@@ -1,5 +1,9 @@
+#include <utils.h>
+
 #include <kernel/io.h>
 #include <kernel/vga.h>
+
+#include <kernel/tty.h>
 
 void io_initialize() {
 	//ensure scancode set #1
@@ -19,7 +23,7 @@ void update_cursor(int row, int column)
 	outb(0x3D5, (unsigned char)((position >> 8) & 0xFF));
 }
 
-const char* scancode = "\0\x10""1234567890-=\b\tQWERTYUIOP[]\n\x1d""ASDFGHJKL;'`\x1e\\ZXCVBNM,./\x1d*\x1e \x1f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x9c\x9d\x97\x98\x99\x9a\x94\x95\x96\x9b\x91\x92\x93\x90\x9a\0\0\0\x1b\x1c";
+const char* scancode = "\x01\x10""1234567890-=\b\tqwertyuiop[]\n\x1d""asdfghjkl;'`\x1e\\zxcvbnm,./\x1d*\x1e \x1f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x7c\x7d\x77\x78\x79\x7a\x74\x75\x76\x7b\x71\x72\x73\x70\x7a\x01\0\x01\x1b\x1c";
 //TODO: handle 0xe0 chars, wrapper class
 /*
 somebody's laptop (if tested, please confirm) - ctrl + alt + f1, showkey --scancodes, ctrl + alt + f7
@@ -36,19 +40,19 @@ media forward
 aeroplane mode 
 */
 //set 2 - keep in case it is needed
-//const char* scancode = "\x19\0\x15\x13\x11\x12\x1c\0\x1a\x18\x16\x14\t`\0\0\x1f\x1e\x1dQ1\0\0\0ZSAW2\0\0CXDE43\0\0 VFTR5\0\0NBHGY6\0\0\0MJU78\0\0,KIO09\0\0./L;P-\0\0\0'\0[=\0\0\x9e\x9f\n]\0\\\0\0\0\0\b\0\0\x91\0\x94\x97\0\0\0\x90\x9a\x92\x95\x96\x98\x10\xa0"
+//const char* scancode = "\x19\x01\x15\x13\x11\x12\x1c\x01\x1a\x18\x16\x14\t`\x01\0\x1f\x1e\x1dQ1\x01\0\0ZSAW2\x01\0CXDE43\x01\0 VFTR5\x01\0NBHGY6\x01\0\0MJU78\x01\0,KIO09\x01\0./L;P-\x01\0\0'\0[=\x01\0\x7e\x7f\n]\x01\\\x01\0\x01\0\b\x01\0\x71\x01\x74\x77\x01\0\x01\x70\x7a\x72\x75\x76\x78\x10\xa0"
 /*
-\0 invalid
+01 invalid
 10 esc
 11-1c f1-f12
 1d lctrl
 1e lshift
 1f lalt
-90-99 numpad0-9
-9a .
-9b -
-9c +
-9f rshift
+70-79 numpad0-9
+7a .
+7b -
+7c +
+7f rshift
 //a0 numlock
 //a1 scroll lock
 //a2 caps
@@ -64,27 +68,34 @@ char io_getscancode() {
     } while(1);
 }
 
-char io_getchar() {
-	int code = io_getscancode();
-	//TODO: special chars - how can we fit them? the current way won't work because of release
-	//if (code & scancode[code])
-	//	return //special
-	//TODO:keep upper bit - signifies release:
-	//return (scancode[code & 0x7F] | (code & 0x80));
-	//bool release = code & 0x80 ? true : false;
-	//int character = code & 0x7e;
-	//if (character >= 0x1d && character <= 0x1f)
-	if (code & 0x80)
-		return '\xFF';
-    return scancode[code];
-}
-
 bool ctrl;
 bool shift;
 bool alt;
 
-//TODO: use this to handle interrupts
+char io_getchar() {
+	key result = {};
+	while (!result.press || result.ctrl || result.alt) {
+		result = io_getkey();
+	}
+	return result.character;
+}
+
+//TODO: use interrupts
 key io_getkey() {
-	key returns = {};
-	return returns;
+	int code = 0;
+	while (!code) {
+		int code = io_getscancode();
+		bool press = code & 0x80 ? false : true;
+		int character = scancode[code & 0x7f];
+		switch (character) {
+			case 0x1d: case 0x7d: ctrl = press; code = 0; continue;
+			case 0x1e: case 0x7e: shift = press; code = 0; continue;
+			case 0x1f: case 0x7f:  alt = press; code = 0; continue;
+		}
+		if (shift && !alt && !ctrl)
+			character = shiftify(character);
+		key result = { .character = character, .press = press, .ctrl = ctrl, .shift = shift, .alt = alt };
+	    return result;
+	}
+	return (key) {};
 }

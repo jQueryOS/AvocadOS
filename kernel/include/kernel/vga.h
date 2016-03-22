@@ -1,5 +1,5 @@
-#ifndef _VGA_H
-#define _VGA_H 1
+#ifndef _KERNEL_VGA_H
+#define _KERNEL_VGA_H 1
 
 typedef enum {
 	BLACK = 0,

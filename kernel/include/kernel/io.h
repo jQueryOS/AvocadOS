@@ -1,5 +1,5 @@
-#ifndef _IO_TTY_H
-#define _IO_TTY_H 1
+#ifndef _KERNEL_IO_H
+#define _KERNEL_IO_H 1
 
 #if !defined(__cplusplus)
 #include <stdbool.h>
@@ -22,7 +22,8 @@ typedef struct {
     bool ctrl;
     bool shift;
     bool alt;
-    char key;
+    bool press;
+    char character;
 } key;
 
 typedef struct {
@@ -39,7 +40,7 @@ typedef enum {
     TRAP_GATE_16      =  7,
     INTERRUPT_GATE_32 = 14,
     TRAP_GATE_32      = 15
-} gete_type;
+} gate_type;
 
 void io_initialize(void);
 char io_getscancode(void);

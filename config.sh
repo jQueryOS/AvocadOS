@@ -1,6 +1,11 @@
-SYSTEM_HEADER_PROJECTS="libc libterm kernel"
-PROJECTS="libc libterm kernel"
+KERNEL_HEADER_PROJECT="kernel"
+KERNEL_PROJECT="kernel"
+SYSTEM_HEADER_PROJECTS="libc libterm libutils"
+PROJECTS="libc libterm libutils"
 # Add new libs here
+# TODO: exclude libmath
+# TODO: libfun
+# TODO: extended mode option, if disabled disable libfun and libutils.math+random
 
 export MAKE=${MAKE:-make}
 export HOST=${HOST:-$(./default-host.sh)}
@@ -12,7 +17,7 @@ export CC=${HOST}-gcc
 export PREFIX=/usr
 export EXEC_PREFIX=$PREFIX
 export BOOTDIR=/boot
-export LIBDIR=$EXEC_PREFIX/lib
+export LIBDIR=$EXEC_PREFIX/libs/lib
 export INCLUDEDIR=$PREFIX/include
 
 export CFLAGS='-O2 -g'

@@ -36,9 +36,8 @@ void kernel_main() {
 	info("Test.");
 	warn("Test.");
 	err("Test\ttabs.");
-	println("Done!");
 	while (true) {
-		char c = io_getchar();
-		println("%c", c);
+		//io_getchar();
+		println("%c", io_getchar());
 	}
 }
