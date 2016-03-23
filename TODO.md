@@ -4,4 +4,4 @@
 - [ ] 
 
 ## Library
-- [ ] Fast functions - primecount etc. (not linked to kenel)
+- [ ] Fast functions - primecount etc. (not linked to kernel)

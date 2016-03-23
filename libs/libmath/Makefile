@@ -28,7 +28,8 @@ LIBK_CPPFLAGS:=$(LIBK_CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
 
 FREEOBJS:=\
 $(ARCH_FREEOBJS) \
-fun/matrix.o \
+math/primecount.o \
+math/math.o \
 
 HOSTEDOBJS:=\
 $(ARCH_HOSTEDOBJS) \
@@ -39,16 +40,16 @@ $(HOSTEDOBJS) \
 
 LIBK_OBJS:=$(FREEOBJS:.o=.libk.o)
 
-BINARIES=libfun.a libfunk.a
+BINARIES=libmath.a libmathk.a
 
 all: $(BINARIES)
 
 .PHONY: all clean install install-headers install-libs
 
-libfun.a: $(OBJS)
+libmath.a: $(OBJS)
 	$(AR) rcs $@ $(OBJS)
 
-libfunk.a: $(LIBK_OBJS)
+libmathk.a: $(LIBK_OBJS)
 	$(AR) rcs $@ $(LIBK_OBJS)
 
 %.o: %.c

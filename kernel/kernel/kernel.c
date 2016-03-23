@@ -1,5 +1,5 @@
 #if !defined(__cplusplus)
-#include <stdbool.h> //C doesn't have booleans by default
+#include <stdbool.h> //C has no bools by default
 #endif
 #include <stddef.h>
 #include <stdint.h>
@@ -11,7 +11,7 @@
 #include <kernel/tty.h>
 #include <kernel/io.h>
 
-#if defined(__linux__)
+#if defined(__linux__) //TODO: check for other OSes
 #error "Use a cross-compiler"
 #endif
 
