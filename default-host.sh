@@ -1,2 +1,2 @@
 #!/bin/sh
-echo ~/opt/cross/bin/i686-elf
+echo ~/opt/cross-64/bin/x86_64-avocados

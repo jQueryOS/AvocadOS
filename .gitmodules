@@ -1,0 +1,6 @@
+[submodule "newlib-cygwin"]
+	path = newlib-cygwin
+	url = git://sourceware.org/git/newlib-cygwin.git
+[submodule "btrfs-progs"]
+	path = btrfs-progs
+	url = https://github.com/kdave/btrfs-progs.git

@@ -1,7 +1,7 @@
 KERNEL_HEADER_PROJECT="kernel"
 KERNEL_PROJECT="kernel"
-SYSTEM_HEADER_PROJECTS="libc libterm libutils"
-PROJECTS="libc libterm libutils"
+SYSTEM_HEADER_PROJECTS="libterm libutils"
+PROJECTS="libterm libutils"
 # Add new libs here
 # TODO: exclude libmath
 # TODO: libfun
@@ -17,7 +17,7 @@ export CC=${HOST}-gcc
 export PREFIX=/usr
 export EXEC_PREFIX=$PREFIX
 export BOOTDIR=/boot
-export LIBDIR=$EXEC_PREFIX/libs/lib
+export LIBDIR=$EXEC_PREFIX/lib
 export INCLUDEDIR=$PREFIX/include
 
 export CFLAGS='-O2 -g'

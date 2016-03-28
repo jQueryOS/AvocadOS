@@ -15,7 +15,7 @@ INCLUDEDIR?=$(PREFIX)/include
 CFLAGS:=$(CFLAGS) -ffreestanding -fbuiltin -Wall -Wextra
 CPPFLAGS:=$(CPPFLAGS) -D__is_avocados_kernel -Iinclude
 LDFLAGS:=$(LDFLAGS)
-LIBS:=$(LIBS) -nostdlib -lk -ltermk -lutilsk -lgcc
+LIBS:=$(LIBS) -nostdlib -lc -ltermk -lutilsk -lgcc
 # Add new libs here
 
 ARCHDIR:=arch/$(HOSTARCH)
