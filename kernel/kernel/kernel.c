@@ -35,7 +35,8 @@ void kernel_main() {
 	success("Test.");
 	info("Test.");
 	warn("Test.");
-	err("Test\ttabs.");
+	err("Test\ttabs");
+	info("Only tabs are supported as indentation, space users will be terminated.")
 	while (true) {
 		//io_getchar();
 		println("%c", io_getchar());
